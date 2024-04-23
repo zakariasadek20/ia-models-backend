@@ -1,0 +1,111 @@
+server:
+  port: 9098
+  compression:
+    enabled: true
+    mime-types:
+      - text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+spring:
+  application:
+    name: TEMPLATE-BACKEND
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        #        order_inserts: true
+        #        order_updates: true
+        #        generate_statistics: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    #          batch_size: 100
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    initialization-mode: always
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings.trace: false
+      settings.web-allow-others: false
+  flyway:
+    check-location: false
+    locations: classpath:db/migration/all,classpath:db/migration/dev,classpath:db/data/all,classpath:db/data/dev
+    baseline-on-migrate: true
+    out-of-order: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+#  Minio
+minio:
+  bucket:
+    name: ai-images
+  access:
+    key: CTVjVG4YVnVusGeWK7IO
+    secret: 867Rw8FtnvyaYe5mr4J4Ej0yRvjI5TYZsrdthBZO
+  url: http://localhost:8001
+
+logging:
+  config: classpath:log/logback-spring.xml
+  level:
+    ROOT: INFO
+    com.exosdata: INFO
+    hibernate:
+      SQL: INFO
+    org:
+      springframework:
+        aop:
+          interceptor:
+            PerformanceMonitorInterceptor: TRACE
+    type:
+      descriptor:
+        sql:
+          BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: '/ai/api/v1/management'
+      cors:
+        allowed-origins: '*'
+        allowed-methods: '*'
+        allowed-headers: '*'
+  endpoint:
+    jhimetrics:
+      enabled: true
+    health:
+      enabled: true
+
+
+service:
+  security:
+    authentication:
+      type: keycloak #jwt,keycloak
+      jwt:
+        token-validity-in-seconds: 86400
+        base64-secret: a2JrQVczVFZMRDJjZmkzd3drTFZvZl9TNmE5bHVLXzFSOEtNZnV4M2pVbm9OWlFTdWhuUk1PNm1PSVY0VGFzTk5YTU5aRFlMcGMzeWpUUUFHMGFIQk4zNkc1ajI0Y2w0LXRHZXBqdmNHT2dYZFpTOGNzSHlidXhRTHRHMlRHZkMzanpmb2FLaHNRQlJZbXZvdVFzMzBOTUNIU0R5Y2x1Sk51S28zaS1tY3pvc2lLQW9PTHRXQkNKeVZjampQcFFZVWlnalNjeHJQWkdZR3BRb1A2NnRBOWNPTTdXSFlyZWlQR0U5SFlWcjdYMFd0M0hlQTEwZF9ZYWZMTmJqTnFZUUp4NldTNGlRcGpxQnRoMnlwblo3ckp0VTdieXZrbnBHcVdTN1VLYUEwMm42THZRcDlSLWNkdElBOXNIMmV2VzJlc2RqdkdSTmdQOVpsQmF4OUxFTg==
+
+  params:
+    password-duration: 365
+    logging-method: flat-console
+  properties:
+    monitoring:
+      performance: false
+      input-and-output: true
+
